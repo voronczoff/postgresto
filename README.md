@@ -9,6 +9,8 @@ Postgresto is a configurable data browser \ administration UI for [PostgREST](ht
 The deployment package includes the prebuilt UI and deployment files. Optionally edit `.env` (the defaults launch with a sample database), then start the Docker Compose stack:
 
 ```bash
+git clone https://github.com/voronczoff/postgresto
+cd postgresto
 docker compose up
 ```
 
