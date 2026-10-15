@@ -1,0 +1,90 @@
+server {
+  listen 80;
+  server_name _;
+  index index.html;
+  # Relative redirects so host:published-port (e.g. :7777) is preserved.
+  absolute_redirect off;
+
+  client_max_body_size 1000m;
+
+  # SPA + PostgREST under the same origin (only published port on the stack).
+  # VITE_BASE_PATH is substituted by the nginx image entrypoint (envsubst).
+
+  gzip on;
+  gzip_vary on;
+  gzip_proxied any;
+  gzip_comp_level 5;
+  gzip_min_length 256;
+  gzip_types
+    text/plain
+    text/css
+    text/xml
+    application/javascript
+    application/json
+    application/xml
+    image/svg+xml;
+
+  location = / {
+    return 302 ${VITE_BASE_PATH}/;
+  }
+
+  location = ${VITE_BASE_PATH} {
+    return 302 ${VITE_BASE_PATH}/;
+  }
+
+  # Browser tabs cannot send Accept-Profile. `/api/{schema}/{table}` is
+  # rewritten to `/{table}` with Accept-Profile set. `/api/rpc/...` is unchanged.
+  location ~ ^${VITE_BASE_PATH}/api/(?!rpc/)([^/]+)/ {
+    set $pgrst_schema $1;
+    rewrite ^${VITE_BASE_PATH}/api/[^/]+/(.*)$ /$1 break;
+    proxy_pass http://api:3000;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Authorization $http_authorization;
+    proxy_set_header Accept-Profile $pgrst_schema;
+    proxy_pass_header Content-Range;
+    proxy_pass_header Prefer;
+    client_max_body_size 1000m;
+  }
+
+  # Exact /api (no trailing slash): SPA try_files must not swallow OpenAPI root.
+  # App API_BASE_URL is stored without a trailing slash.
+  location = ${VITE_BASE_PATH}/api {
+    proxy_pass http://api:3000/;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Authorization $http_authorization;
+    proxy_pass_header Content-Range;
+    proxy_pass_header Prefer;
+    client_max_body_size 1000m;
+  }
+
+  location ${VITE_BASE_PATH}/api/ {
+    proxy_pass http://api:3000/;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Authorization $http_authorization;
+    proxy_pass_header Content-Range;
+    proxy_pass_header Prefer;
+    client_max_body_size 1000m;
+  }
+
+  # Portable dist: relative asset URLs + <base href> so deep SPA routes
+  # still load ./assets/* from the mount path (not the current URL segment).
+  # OIDC meta is deploy-time too (empty authority/client = login gate off).
+  location ${VITE_BASE_PATH}/ {
+    root /usr/share/nginx/html;
+    sub_filter_once on;
+    sub_filter '<head>' '<head><base href="${VITE_BASE_PATH}/"><meta name="postgresto-oidc-authority" content="${VITE_OIDC_AUTHORITY}"><meta name="postgresto-oidc-client-id" content="${VITE_OIDC_CLIENT_ID}">';
+    try_files $uri $uri/ ${VITE_BASE_PATH}/index.html;
+  }
+}

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+	<!-- Values are supplied by scripts/liquibaseChangelogParams.sh from repo-root .env. -->
+	<property name="config.table" value="config"/>
+	<property name="menu.table" value="menu"/>
+	<property name="view.table" value="view"/>
+	<property name="models.table" value="model"/>
+	<property name="search.table" value="search"/>
+
+	<!-- Each scripts subfolder is an ordered, recursively loaded formatted-SQL changelog. -->
+	<includeAll path="schema" relativeToChangelogFile="true"/>
+	<includeAll path="functions" relativeToChangelogFile="true"/>
+	<includeAll path="triggers" relativeToChangelogFile="true"/>
+	<includeAll path="config" relativeToChangelogFile="true"/>
+	<includeAll path="menu" relativeToChangelogFile="true"/>
+	<includeAll path="views" relativeToChangelogFile="true"/>
+	<includeAll path="data" relativeToChangelogFile="true"/>
+
+</databaseChangeLog>
