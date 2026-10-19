@@ -1,6 +1,6 @@
 --liquibase formatted sql
 --changeset framework:seed-view-8cd91ba9b4 runOnChange:true splitStatements:false
-INSERT INTO postgresto.${view.table}
+INSERT INTO postgresto.view
   (id, jsondata)
 VALUES (
   'postgresto.search|Count by Table',

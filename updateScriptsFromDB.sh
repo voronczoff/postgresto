@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Export the configured Postgres config, menu, and view rows to Liquibase SQL.
-# Connection and table settings come from the repository-root .env.
+# Connection settings come from the repository-root .env.
 # Stale per-ID files are removed; their IDs are kept in a DELETE manifest.
 set -euo pipefail
 
@@ -25,14 +25,11 @@ export PGHOST="${PGHOST:-localhost}"
 export PGPORT="${PGPORT:-5432}"
 export PGUSER PGDATABASE PGPASSWORD
 SCHEMA="${SCHEMA:-postgresto}"
-CONFIG_TABLE="${VITE_CONFIG_TABLE:-config}"
-MENU_TABLE="${VITE_MENU_TABLE:-menu}"
-VIEW_TABLE="${VITE_VIEW_TABLE:-view}"
 
 echo "Exporting ${PGDATABASE} (${PGHOST}:${PGPORT}) schema ${SCHEMA}"
-echo "Tables: ${SCHEMA}.${VIEW_TABLE}, ${SCHEMA}.${MENU_TABLE}, ${SCHEMA}.${CONFIG_TABLE}"
+echo "Tables: ${SCHEMA}.view, ${SCHEMA}.menu, ${SCHEMA}.config"
 
-python3 - "$ROOT" "$SCHEMA" "$VIEW_TABLE" "$MENU_TABLE" "$CONFIG_TABLE" <<'PY'
+python3 - "$ROOT" "$SCHEMA" <<'PY'
 import hashlib
 import json
 import re
@@ -42,7 +39,7 @@ import textwrap
 from pathlib import Path
 
 root = Path(sys.argv[1])
-schema, view_table, menu_table, config_table = sys.argv[2:]
+schema = sys.argv[2]
 
 
 def ident(value):
@@ -84,7 +81,7 @@ def filename_for(value):
     return name + ".sql"
 
 
-def write_rows(folder, rows, kind, table_variable):
+def write_rows(folder, rows, kind, table_name):
     directory = root / "scripts" / folder
     directory.mkdir(parents=True, exist_ok=True)
     generated = set()
@@ -108,7 +105,7 @@ def write_rows(folder, rows, kind, table_variable):
         path.write_text(
             "--liquibase formatted sql\n"
             f"--changeset framework:{change_id} runOnChange:true splitStatements:false\n"
-            f"INSERT INTO postgresto.${{{table_variable}}}\n"
+            f"INSERT INTO postgresto.{table_name}\n"
             f"  ({columns_sql})\n"
             f"VALUES (\n  {values[0]},\n{json_sql}\n)\n"
             "ON CONFLICT (id) DO UPDATE SET\n"
@@ -135,7 +132,7 @@ def write_rows(folder, rows, kind, table_variable):
 
     removed_ids.difference_update(active_ids)
     if removed_ids:
-        table = f"postgresto.${{{table_variable}}}"
+        table = f"postgresto.{table_name}"
         ids_sql = ",\n  ".join(sql_literal(value) for value in sorted(removed_ids))
         manifest.write_text(
             "--liquibase formatted sql\n"
@@ -150,12 +147,15 @@ def write_rows(folder, rows, kind, table_variable):
     print(f"{folder}: wrote {len(rows)} row(s)")
 
 
-views = fetch(view_table)
-menus = fetch(menu_table)
-configs = fetch(config_table)
-write_rows("views", views, "view", "view.table")
-write_rows("menu", menus, "menu", "menu.table")
-write_rows("config", configs, "config", "config.table")
+views = fetch("view")
+menus = fetch("menu")
+configs = fetch("config")
+write_rows("views", views, "view", "view")
+write_rows("menu", menus, "menu", "menu")
+write_rows("config", configs, "config", "config")
 PY
+
+# Refresh the search index after applying the exported index configuration.
+printf '\nSELECT * FROM postgresto.search_refresh();\n' >> scripts/config/index.sql
 
 echo "Done."

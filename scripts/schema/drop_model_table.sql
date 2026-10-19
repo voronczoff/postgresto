@@ -4,7 +4,7 @@
 
 DO $$
 DECLARE
-  models_table text := '${models.table}';
+  models_table text := 'model';
 BEGIN
   EXECUTE format('DROP TRIGGER IF EXISTS %I_trg_log_history ON postgresto.%I', models_table, models_table);
   EXECUTE format('DROP TRIGGER IF EXISTS update_timestamp_%I ON postgresto.%I', models_table, models_table);

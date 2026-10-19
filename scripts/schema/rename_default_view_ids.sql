@@ -49,8 +49,8 @@ $$;
 
 DO $$
 DECLARE
-  views_table text := '${view.table}';
-  menu_table text := '${menu.table}';
+  views_table text := 'view';
+  menu_table text := 'menu';
 BEGIN
   -- Prefer renaming when the target id is free; otherwise drop the legacy row.
   EXECUTE format($sql$

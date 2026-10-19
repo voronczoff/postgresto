@@ -1,6 +1,6 @@
 --liquibase formatted sql
 --changeset framework:seed-view-dfb76206cc runOnChange:true splitStatements:false
-INSERT INTO postgresto.${view.table}
+INSERT INTO postgresto.view
   (id, jsondata)
 VALUES (
   'postgresto.demo|demo_tree',
@@ -56,13 +56,6 @@ VALUES (
         "width": 72,
         "visible": false,
         "orderList": 5
-      },
-      "jsondata level": {
-        "path": "jsondata->level",
-        "type": "number",
-        "locked": false,
-        "visible": false,
-        "orderList": 4
       }
     },
     "sorting": [

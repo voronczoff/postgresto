@@ -1,6 +1,6 @@
 --liquibase formatted sql
 --changeset framework:seed-view-bc770f49e6 runOnChange:true splitStatements:false
-INSERT INTO postgresto.${view.table}
+INSERT INTO postgresto.view
   (id, jsondata)
 VALUES (
   'postgresto.demo|Default',
@@ -21,42 +21,35 @@ VALUES (
         "type": "text",
         "locked": false,
         "visible": true,
-        "orderList": 11
+        "orderList": 12
       },
       "date": {
-        "path": "jsondata->>date",
+        "path": "date",
         "type": "date",
         "locked": false,
         "visible": true,
-        "orderList": 6
-      },
-      "json": {
-        "path": "jsondata->json",
-        "type": "json",
-        "locked": false,
-        "visible": false,
-        "orderList": 9
+        "orderList": 20
       },
       "real": {
         "path": "real",
         "type": "number",
         "locked": false,
         "visible": true,
-        "orderList": 16
+        "orderList": 17
       },
       "text": {
-        "path": "jsondata->>text",
+        "path": "text",
         "type": "text",
         "locked": false,
         "visible": true,
-        "orderList": 3
+        "orderList": 9
       },
       "time": {
         "path": "time",
         "type": "text",
         "locked": false,
         "visible": true,
-        "orderList": 20,
+        "orderList": 21,
         "searchable": false
       },
       "uuid": {
@@ -64,7 +57,7 @@ VALUES (
         "type": "text",
         "locked": false,
         "visible": true,
-        "orderList": 24,
+        "orderList": 25,
         "searchable": false
       },
       "bytea": {
@@ -75,26 +68,12 @@ VALUES (
         "orderList": 29,
         "searchable": false
       },
-      "flags": {
-        "path": "jsonb->>flags",
-        "type": "text",
-        "locked": false,
-        "visible": true,
-        "orderList": 26
-      },
-      "label": {
-        "path": "json->>label",
-        "type": "text",
-        "locked": false,
-        "visible": true,
-        "orderList": 25
-      },
       "money": {
         "path": "money",
         "type": "text",
         "locked": false,
         "visible": true,
-        "orderList": 27,
+        "orderList": 8,
         "searchable": false,
         "backgroundColor": "#a2ff80"
       },
@@ -103,21 +82,7 @@ VALUES (
         "type": "number",
         "locked": false,
         "visible": true,
-        "orderList": 14
-      },
-      "date 2": {
-        "path": "date",
-        "type": "date",
-        "locked": false,
-        "visible": true,
-        "orderList": 19
-      },
-      "number": {
-        "path": "jsondata->number",
-        "type": "number",
-        "locked": false,
-        "visible": true,
-        "orderList": 4
+        "orderList": 15
       },
       "parent": {
         "link": "demo/id",
@@ -127,55 +92,40 @@ VALUES (
         "visible": true,
         "orderList": 2
       },
-      "text 2": {
-        "path": "text",
-        "type": "text",
-        "locked": false,
-        "visible": true,
-        "orderList": 8
-      },
       "boolean": {
-        "path": "jsondata->boolean",
+        "path": "boolean",
         "type": "boolean",
-        "width": 0,
         "locked": false,
         "visible": true,
-        "orderList": 5
+        "orderList": 19
       },
       "integer": {
         "path": "integer",
         "type": "number",
         "locked": false,
         "visible": true,
-        "orderList": 13
+        "orderList": 14
       },
       "numeric": {
         "path": "numeric",
         "type": "number",
         "locked": false,
         "visible": true,
-        "orderList": 15
+        "orderList": 16
       },
       "varchar": {
         "path": "varchar",
         "type": "text",
         "locked": false,
         "visible": true,
-        "orderList": 10
-      },
-      "datetime": {
-        "path": "jsondata->>datetime",
-        "type": "datetime",
-        "locked": false,
-        "visible": true,
-        "orderList": 7
+        "orderList": 11
       },
       "interval": {
         "path": "interval",
         "type": "text",
         "locked": false,
         "visible": true,
-        "orderList": 23,
+        "orderList": 24,
         "searchable": false
       },
       "smallint": {
@@ -183,23 +133,16 @@ VALUES (
         "type": "number",
         "locked": false,
         "visible": true,
-        "orderList": 12
-      },
-      "boolean 2": {
-        "path": "boolean",
-        "type": "boolean",
-        "locked": false,
-        "visible": true,
-        "orderList": 18
+        "orderList": 13
       },
       "timestamp": {
         "path": "timestamp",
         "type": "datetime",
         "locked": false,
         "visible": true,
-        "orderList": 21
+        "orderList": 22
       },
-      "created_at": {
+      "created at": {
         "path": "created_at",
         "type": "datetime",
         "locked": false,
@@ -207,7 +150,7 @@ VALUES (
         "orderList": 28,
         "backgroundColor": "#ebebeb"
       },
-      "created_by": {
+      "created by": {
         "path": "created_by",
         "type": "text",
         "locked": false,
@@ -215,7 +158,14 @@ VALUES (
         "orderList": 30,
         "backgroundColor": "#ebebeb"
       },
-      "updated_at": {
+      "json label": {
+        "path": "json->>label",
+        "type": "text",
+        "locked": false,
+        "visible": true,
+        "orderList": 26
+      },
+      "updated at": {
         "path": "updated_at",
         "type": "datetime",
         "locked": false,
@@ -223,7 +173,7 @@ VALUES (
         "orderList": 31,
         "backgroundColor": "#ebebeb"
       },
-      "updated_by": {
+      "updated by": {
         "path": "updated_by",
         "type": "text",
         "locked": false,
@@ -231,25 +181,30 @@ VALUES (
         "orderList": 32,
         "backgroundColor": "#ebebeb"
       },
+      "jsonb flags": {
+        "path": "jsonb->>flags",
+        "type": "text",
+        "locked": false,
+        "visible": true,
+        "orderList": 27
+      },
       "timestamptz": {
         "path": "timestamptz",
         "type": "datetime",
         "locked": false,
         "visible": true,
-        "orderList": 22
+        "orderList": 23
       },
-      "double_precision": {
+      "double precision": {
         "path": "double_precision",
         "type": "number",
         "locked": false,
         "visible": true,
-        "orderList": 17
+        "orderList": 18
       }
     },
     "filters": {
-      "filterPane": null,
-      "quickSearch": "",
-      "preliminaryFilter": []
+      "quickSearch": ""
     },
     "sorting": [
       {

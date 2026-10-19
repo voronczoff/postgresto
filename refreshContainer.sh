@@ -15,8 +15,8 @@ STACK_ID=${STACK_ID:-common}
 SERVICE_NAME=${1:-}
 
 # nginx serves ./dist from the host. Rebuild it when refreshing the full stack
-# or nginx itself so Docker cannot keep serving a stale frontend bundle.
-#if [ -z "$SERVICE_NAME" ] || [ "$SERVICE_NAME" = "nginx" ]; then
+# or proxy itself so Docker cannot keep serving a stale frontend bundle.
+#if [ -z "$SERVICE_NAME" ] || [ "$SERVICE_NAME" = "proxy" ]; then
 #  npm run build
 #fi
 

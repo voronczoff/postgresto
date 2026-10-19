@@ -1,11 +1,12 @@
 --liquibase formatted sql
 --changeset framework:seed-menu-857d6603bd runOnChange:true splitStatements:false
-INSERT INTO postgresto.${menu.table}
+INSERT INTO postgresto.menu
   (id, jsondata)
 VALUES (
   'databasechangelog',
   $json$
   {
+    "icon": "ListAlt",
     "view": "public.databasechangelog|Default",
     "label": "Databasechangelog",
     "parent": "system_tables",

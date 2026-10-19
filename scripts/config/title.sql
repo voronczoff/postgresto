@@ -1,6 +1,6 @@
 --liquibase formatted sql
 --changeset framework:seed-config-aaf2320646 runOnChange:true splitStatements:false
-INSERT INTO postgresto.${config.table}
+INSERT INTO postgresto.config
   (id, jsondata)
 VALUES (
   'title',

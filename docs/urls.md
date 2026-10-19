@@ -17,7 +17,7 @@ Two namespaces:
 | ---- | ---- |
 | `/data/{schema}/{table}` | List |
 | `/data/{schema}/{table}/record/{id}` | Record page |
-| `/data/{schema}/{table}/history` | History |
+| `/data/{schema}/{table}_history` | Standard list for the table's history snapshots |
 | `/data/{schema}/{table}/feed` | Feed |
 | `/data/{schema}/{table}/columns` | Column selector |
 | `/data/{schema}/{table}/stats` | Field stats |
@@ -41,7 +41,7 @@ Views are projections, not separate resources. Same path; differ by `?view=`:
 | `/data/{schema}/{table}?view=demo_tree` | Named saved view |
 | `/data/{schema}/{table}?view=Default` | Explicit Default when bare URL means another linked view |
 
-Record / history / feed / etc. stay under the same table path; `?view=` still selects the projection where applicable.
+Record and feed pages stay under the source table path. History uses the companion `{table}_history` table as a standard list.
 
 ### Menu leaves vs URL
 
@@ -62,7 +62,8 @@ Non-data screens (settings, tools, search, …):
 | `/pages/menu_manager` | Menu Manager |
 | `/pages/view_configurator` | View Configurator |
 | `/pages/postgrest_model_extractor` | Alias of View Configurator |
-| `/pages/dbinfo` | DB Info |
+| `/pages/server_info` | Server info (General, DBMS, Auth) |
+| `/pages/dbinfo` | Legacy alias for Server info |
 | `/pages/decoder` | Decoder |
 | `/pages/json-editor` | JSON Editor |
 | `/pages/json-viewer` | JSON Viewer (fullscreen) |
@@ -80,20 +81,19 @@ Menu **path-link** views (`/settings`, `decoder`, …) normalize to `/pages/…`
 Flat bookmarks still work and replace-redirect:
 
 - `/{table}` → `/data/{schema}/{table}`
-- `/{table}/record/{id}` (and history / feed / columns / stats / fullscreen) → under `/data/…`
+- `/{table}/record/{id}` (and feed / columns / stats / fullscreen) → under `/data/…`
 - `/{page}` for known app pages → `/pages/{page}`
 
 ## Query params (common)
 
 | Param | Where | Role |
 | ----- | ----- | ---- |
-| `view` | Data list (and some history) | Saved view name or history view document id |
+| `view` | Data list | Saved view name |
 | PostgREST-style filters (`col=eq.…`, `and=(…)`, `or=(…)`) | Data list | Filter builder state (preferred) |
 | `filterTree` | Data list | Legacy JSON blob for filters (still parsed; not written) |
 | `order`, `offset`, `limit` | Data list | Sort / paging (same names as PostgREST) |
 | `quickSearch`, `treeSearch`, `continuous` | Data list | App-only list UI state |
 | `id` | Data list | Focused record in the details pane (bare value; not `id=eq.…`) |
-| `ids`, `codes` | History | Scope history to records |
 | `q` | `/pages/globalsearch` | Search term |
 
 Filter, sort, paging, and search state is serialized into the URL as described below.

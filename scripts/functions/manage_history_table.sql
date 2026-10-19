@@ -23,6 +23,8 @@ DECLARE
   v_trigger_name text;
   v_history_exists boolean;
   v_trigger_enabled boolean;
+  v_has_jsondata boolean;
+  v_log_function text;
 BEGIN
   IF v_schema IS NULL OR v_schema = '' THEN
     RAISE EXCEPTION 'schema name is required';
@@ -63,6 +65,18 @@ BEGIN
 
   SELECT EXISTS (
     SELECT 1
+    FROM information_schema.columns
+    WHERE table_schema = v_schema
+      AND table_name = p_table
+      AND column_name = 'jsondata'
+  ) INTO v_has_jsondata;
+  v_log_function := CASE
+    WHEN v_has_jsondata THEN 'history_log_changes'
+    ELSE 'history_log_full_row_changes'
+  END;
+
+  SELECT EXISTS (
+    SELECT 1
     FROM information_schema.tables
     WHERE table_schema = v_schema
       AND table_name = v_history_table
@@ -86,7 +100,8 @@ BEGIN
     'history_table', v_history_table,
     'history_exists', v_history_exists,
     'trigger', v_trigger_name,
-    'trigger_enabled', v_trigger_enabled
+    'trigger_enabled', v_trigger_enabled,
+    'logger', v_log_function
   );
 END;
 $function$;
@@ -104,7 +119,9 @@ DECLARE
   v_schema text := btrim(p_schema);
   v_history_table text;
   v_trigger_name text;
+  v_log_function text;
   v_status jsonb;
+  v_has_jsondata boolean;
 BEGIN
   IF p_enabled IS NULL THEN
     RAISE EXCEPTION 'p_enabled is required to change history logging';
@@ -114,6 +131,18 @@ BEGIN
   p_table := v_status ->> 'table';
   v_history_table := v_status ->> 'history_table';
   v_trigger_name := v_status ->> 'trigger';
+
+  SELECT EXISTS (
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_schema = v_schema
+      AND table_name = p_table
+      AND column_name = 'jsondata'
+  ) INTO v_has_jsondata;
+  v_log_function := CASE
+    WHEN v_has_jsondata THEN 'history_log_changes'
+    ELSE 'history_log_full_row_changes'
+  END;
 
   IF p_enabled IS TRUE THEN
     EXECUTE format(
@@ -129,11 +158,13 @@ BEGIN
       'CREATE TRIGGER %I
         AFTER INSERT OR UPDATE OR DELETE ON %I.%I
         FOR EACH ROW
-        EXECUTE FUNCTION postgresto.history_log_changes()',
+        EXECUTE FUNCTION postgresto.%I()',
       v_trigger_name,
       v_schema,
-      p_table
+      p_table,
+      v_log_function
     );
+    -- Publish the newly created companion table and its trigger to PostgREST.
     PERFORM pg_notify('pgrst', 'reload schema');
   ELSE
     EXECUTE format('DROP TRIGGER IF EXISTS %I ON %I.%I', v_trigger_name, v_schema, p_table);

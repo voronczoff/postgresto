@@ -1,6 +1,6 @@
 --liquibase formatted sql
 --changeset framework:seed-view-66f7fbe591 runOnChange:true splitStatements:false
-INSERT INTO postgresto.${view.table}
+INSERT INTO postgresto.view
   (id, jsondata)
 VALUES (
   'postgresto.menu|tree',

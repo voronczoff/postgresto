@@ -49,7 +49,7 @@ BEGIN
   IF v_table LIKE '%\_history' ESCAPE '\' THEN
     RAISE EXCEPTION 'cannot create a history table directly: %', v_table;
   END IF;
-  IF v_table = '${search.table}' THEN
+  IF v_table = 'search' THEN
     RAISE EXCEPTION 'cannot create the search index table via create_document_table';
   END IF;
 

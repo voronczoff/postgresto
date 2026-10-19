@@ -1,6 +1,6 @@
 --liquibase formatted sql
 --changeset framework:seed-config-1bc04b5291 runOnChange:true splitStatements:false
-INSERT INTO postgresto.${config.table}
+INSERT INTO postgresto.config
   (id, jsondata)
 VALUES (
   'index',
@@ -23,3 +23,5 @@ VALUES (
 )
 ON CONFLICT (id) DO UPDATE SET
   jsondata = EXCLUDED.jsondata;
+
+SELECT * FROM postgresto.search_refresh();

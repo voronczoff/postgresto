@@ -1,3 +1,7 @@
+Date: 2026-10-18
+- History: browse a table’s audit snapshots in a standard list, open individual snapshots, and restore a snapshot or multiple deleted records.
+- Records: open the history for selected records and follow record links directly from list cells.
+
 Date: 2026-10-15
 - Records: compare two or more selected records side by side; fields that differ from the first selected record are highlighted.
 
