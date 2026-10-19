@@ -15,7 +15,6 @@ PGPORT=${PGPORT:-5432}
 PGUSER=${PGUSER:-postgres}
 PGPASSWORD=${PGPASSWORD:-postgres}
 PGDATABASE=${PGDATABASE:-postgresto-local}
-SEARCH_TABLE=${VITE_SEARCH_TABLE:-search}
 
 TIMESTAMP=$(date +"%Y%m%dT%H%M%S")
 BACKUP_FILE="/tmp/${PGDATABASE}_postgresto_${TIMESTAMP}.bak"
@@ -25,7 +24,7 @@ pg_dump \
   --schema=postgresto \
   --format=custom \
   --compress=zstd \
-  -T "postgresto.${SEARCH_TABLE}" \
+  -T 'postgresto.search' \
   -T 'postgresto.*_history' \
   -T 'postgresto.*_events' \
   -T 'postgresto.*_raw' \

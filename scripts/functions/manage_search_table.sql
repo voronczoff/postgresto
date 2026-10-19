@@ -33,7 +33,7 @@ BEGIN
   END IF;
 
   p_table := btrim(p_table);
-  IF p_table = '${search.table}' THEN
+  IF p_table = 'search' THEN
     RAISE EXCEPTION 'search index table cannot manage its own search trigger';
   END IF;
   IF p_table LIKE '%\_history' ESCAPE '\' THEN
@@ -87,7 +87,7 @@ BEGIN
     jsonb_typeof(c.jsondata -> 'index') = 'object'
     AND (c.jsondata -> 'index' -> v_full_name) = 'true'::jsonb
   INTO v_indexed
-  FROM postgresto.${config.table} c
+  FROM postgresto.config c
   WHERE c.id = 'index';
 
   RETURN jsonb_build_object(
@@ -127,7 +127,7 @@ BEGIN
 
   IF p_enabled IS TRUE THEN
     -- Ensure allowlist entry so search_log_changes and search_refresh include the table.
-    INSERT INTO postgresto.${config.table} (id, jsondata)
+    INSERT INTO postgresto.config (id, jsondata)
     VALUES ('index', jsonb_build_object('index', jsonb_build_object(v_full_name, true)))
     ON CONFLICT (id) DO UPDATE
     SET jsondata = jsonb_set(

@@ -1,22 +1,22 @@
 --liquibase formatted sql
 --changeset postgresto:trg-framework-update-timestamp runOnChange:true splitStatements:true logicalFilePath:triggers/cumulative_changelog.xml
 -- BEFORE UPDATE → postgresto.update_timestamp() for framework document tables.
--- Table names from Liquibase -D / schema changelog properties (VITE_*_TABLE).
+-- Framework table names are fixed.
 
-DROP TRIGGER IF EXISTS update_timestamp_${config.table} ON postgresto.${config.table};
-CREATE TRIGGER update_timestamp_${config.table}
-  BEFORE UPDATE ON postgresto.${config.table}
+DROP TRIGGER IF EXISTS update_timestamp_config ON postgresto.config;
+CREATE TRIGGER update_timestamp_config
+  BEFORE UPDATE ON postgresto.config
   FOR EACH ROW
   EXECUTE FUNCTION postgresto.update_timestamp();
 
-DROP TRIGGER IF EXISTS update_timestamp_${menu.table} ON postgresto.${menu.table};
-CREATE TRIGGER update_timestamp_${menu.table}
-  BEFORE UPDATE ON postgresto.${menu.table}
+DROP TRIGGER IF EXISTS update_timestamp_menu ON postgresto.menu;
+CREATE TRIGGER update_timestamp_menu
+  BEFORE UPDATE ON postgresto.menu
   FOR EACH ROW
   EXECUTE FUNCTION postgresto.update_timestamp();
 
-DROP TRIGGER IF EXISTS update_timestamp_${view.table} ON postgresto.${view.table};
-CREATE TRIGGER update_timestamp_${view.table}
-  BEFORE UPDATE ON postgresto.${view.table}
+DROP TRIGGER IF EXISTS update_timestamp_view ON postgresto.view;
+CREATE TRIGGER update_timestamp_view
+  BEFORE UPDATE ON postgresto.view
   FOR EACH ROW
   EXECUTE FUNCTION postgresto.update_timestamp();

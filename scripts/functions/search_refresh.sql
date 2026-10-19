@@ -16,7 +16,7 @@
 -- Unchanged tables (updated_at + matching row counts) skip the orphan anti-join.
 --
 -- Recommended indexes:
---   postgresto.${search.table} — idx_search_index_gin; search_table_indexed_at_idx
+--   postgresto.search — idx_search_index_gin; search_table_indexed_at_idx
 --   each source table — btree on (updated_at) when that column exists
 --   each source table — primary key (or id fallback) (orphan deletes + upserts)
 
@@ -81,7 +81,7 @@ BEGIN
     ELSE NULL
   END
   INTO v_search_config
-  FROM postgresto.${config.table}
+  FROM postgresto.config
   WHERE id = 'index';
 
   v_config_exists := v_search_config IS NOT NULL;
@@ -135,7 +135,7 @@ BEGIN
           AND split_part(e.key, '.', 1) <> ''
         UNION
         SELECT DISTINCT split_part(s."table", '.', 1) AS schema_name
-        FROM postgresto.${search.table} s
+        FROM postgresto.search s
         WHERE s."table" LIKE '%.%'
           AND split_part(s."table", '.', 1) <> ''
       ) x;
@@ -144,7 +144,7 @@ BEGIN
       INTO v_schemas
       FROM (
         SELECT DISTINCT split_part(s."table", '.', 1) AS schema_name
-        FROM postgresto.${search.table} s
+        FROM postgresto.search s
         WHERE s."table" LIKE '%.%'
           AND split_part(s."table", '.', 1) <> ''
       ) x;
@@ -224,7 +224,7 @@ BEGIN
         SELECT
           s."table" AS full_table_name,
           count(*)::int AS deleted_rows
-        FROM postgresto.${search.table} s
+        FROM postgresto.search s
         WHERE s."table" LIKE p_schema || '.%'
           AND NOT EXISTS (
             SELECT 1
@@ -242,7 +242,7 @@ BEGIN
           r_drop.deleted_rows;
       END LOOP;
 
-      DELETE FROM postgresto.${search.table} s
+      DELETE FROM postgresto.search s
       WHERE s."table" LIKE p_schema || '.%'
         AND NOT EXISTS (
           SELECT 1
@@ -264,7 +264,7 @@ BEGIN
     END IF;
 
     IF v_config_exists AND purge_orphans THEN
-      DELETE FROM postgresto.${search.table} s
+      DELETE FROM postgresto.search s
       WHERE s."table" LIKE p_schema || '.%'
         AND (
           NOT jsonb_exists(v_search_config, s."table")
@@ -294,7 +294,7 @@ BEGIN
           AND split_part(e.key, '.', 2) NOT LIKE '%\_history'
           AND split_part(e.key, '.', 2) NOT LIKE '%\_events'
           AND split_part(e.key, '.', 2) NOT LIKE '%\_raw'
-          AND split_part(e.key, '.', 2) <> '${search.table}'
+          AND split_part(e.key, '.', 2) <> 'search'
           AND EXISTS (
             SELECT 1
             FROM pg_class c
@@ -316,7 +316,7 @@ BEGIN
           AND c.relname NOT LIKE '%\_history'
           AND c.relname NOT LIKE '%\_events'
           AND c.relname NOT LIKE '%\_raw'
-          AND c.relname <> '${search.table}'
+          AND c.relname <> 'search'
       ) x;
     END IF;
 
@@ -400,14 +400,14 @@ BEGIN
   --------------------------------------------------------------------------
   -- Single table
   --------------------------------------------------------------------------
-  IF p_table = '${search.table}' THEN
+  IF p_table = 'search' THEN
     IF v_top_level THEN
       RAISE NOTICE '[%] skip %.% — search index table is not indexed',
         to_char(clock_timestamp(), 'HH24:MI:SS'),
         p_schema,
-        '${search.table}';
+        'search';
     END IF;
-    "table" := p_schema || '.' || '${search.table}';
+    "table" := p_schema || '.' || 'search';
     deleted := 0;
     added := 0;
     updated := 0;
@@ -424,7 +424,7 @@ BEGIN
     OR (v_search_config -> v_full_name) = 'false'::jsonb
   ) THEN
     IF purge_orphans THEN
-      DELETE FROM postgresto.${search.table} s WHERE s."table" = v_full_name;
+      DELETE FROM postgresto.search s WHERE s."table" = v_full_name;
       GET DIAGNOSTICS v_deleted = ROW_COUNT;
     END IF;
 
@@ -456,7 +456,7 @@ BEGIN
       AND t.table_type IN ('BASE TABLE', 'VIEW')
   ) THEN
     IF purge_orphans THEN
-      DELETE FROM postgresto.${search.table} s WHERE s."table" = v_full_name;
+      DELETE FROM postgresto.search s WHERE s."table" = v_full_name;
       GET DIAGNOSTICS v_deleted = ROW_COUNT;
     END IF;
 
@@ -533,7 +533,7 @@ BEGIN
 
   SELECT MAX(s.indexed_at)
   INTO v_last_run
-  FROM postgresto.${search.table} s
+  FROM postgresto.search s
   WHERE s."table" = v_full_name;
 
   PERFORM set_config(
@@ -566,7 +566,7 @@ BEGIN
 
     SELECT count(*)::int
     INTO v_search_count
-    FROM postgresto.${search.table} s
+    FROM postgresto.search s
     WHERE s."table" = v_full_name;
 
     IF v_changed = 0 AND v_search_count = v_src_count THEN
@@ -596,7 +596,7 @@ BEGIN
     -- Deletes only: purge orphans, skip empty upsert
     IF v_changed = 0 AND purge_orphans AND v_search_count > v_src_count THEN
       EXECUTE format($q$
-        DELETE FROM postgresto.${search.table} s
+        DELETE FROM postgresto.search s
         WHERE s."table" = %L
           AND NOT EXISTS (
             SELECT 1 FROM %I.%I src WHERE %s
@@ -642,13 +642,13 @@ BEGIN
 
       SELECT count(*)::int
       INTO v_search_count
-      FROM postgresto.${search.table} s
+      FROM postgresto.search s
       WHERE s."table" = v_full_name;
     END IF;
 
     IF v_search_count > v_src_count THEN
       EXECUTE format($q$
-        DELETE FROM postgresto.${search.table} s
+        DELETE FROM postgresto.search s
         WHERE s."table" = %L
           AND NOT EXISTS (
             SELECT 1 FROM %I.%I src WHERE %s
@@ -667,7 +667,7 @@ BEGIN
       -- No source rows newer than last index; only missing rows (search < source)
       EXECUTE format($q$
         WITH upsert AS (
-          INSERT INTO postgresto.${search.table} ("table", id, "index", indexed_at)
+          INSERT INTO postgresto.search ("table", id, "index", indexed_at)
           SELECT
             %L,
             %s,
@@ -679,7 +679,7 @@ BEGIN
             %L::timestamptz
           FROM %I.%I src
           WHERE NOT EXISTS (
-            SELECT 1 FROM postgresto.${search.table} s
+            SELECT 1 FROM postgresto.search s
             WHERE s."table" = %L AND %s
           )
           ON CONFLICT ("table", id) DO UPDATE SET
@@ -696,7 +696,7 @@ BEGIN
     ELSE
       EXECUTE format($q$
         WITH upsert AS (
-          INSERT INTO postgresto.${search.table} ("table", id, "index", indexed_at)
+          INSERT INTO postgresto.search ("table", id, "index", indexed_at)
           SELECT
             %L,
             %s,
@@ -724,7 +724,7 @@ BEGIN
   ELSE
     EXECUTE format($q$
       WITH upsert AS (
-        INSERT INTO postgresto.${search.table} ("table", id, "index", indexed_at)
+        INSERT INTO postgresto.search ("table", id, "index", indexed_at)
         SELECT
           %L,
           %s,

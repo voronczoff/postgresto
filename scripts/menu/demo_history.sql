@@ -1,6 +1,6 @@
 --liquibase formatted sql
 --changeset framework:seed-menu-demo_history runOnChange:true splitStatements:false
-INSERT INTO postgresto.${menu.table}
+INSERT INTO postgresto.menu
   (id, jsondata)
 VALUES (
   'demo_history',

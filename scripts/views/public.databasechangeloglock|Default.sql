@@ -1,6 +1,6 @@
 --liquibase formatted sql
 --changeset framework:seed-view-c5a7070730 runOnChange:true splitStatements:false
-INSERT INTO postgresto.${view.table}
+INSERT INTO postgresto.view
   (id, jsondata)
 VALUES (
   'public.databasechangeloglock|Default',

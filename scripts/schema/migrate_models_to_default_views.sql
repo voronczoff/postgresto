@@ -7,8 +7,8 @@
 
 DO $$
 DECLARE
-  models_table text := '${models.table}';
-  views_table text := '${view.table}';
+  models_table text := 'model';
+  views_table text := 'view';
   has_models boolean;
 BEGIN
   SELECT EXISTS (

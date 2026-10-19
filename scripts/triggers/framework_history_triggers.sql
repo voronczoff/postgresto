@@ -3,20 +3,20 @@
 -- AFTER INSERT/UPDATE/DELETE → postgresto.history_log_changes() for framework document tables.
 -- Requires ${table}_history (created in schema/mandatory_tables.sql). Search has no history.
 
-DROP TRIGGER IF EXISTS ${config.table}_trg_log_history ON postgresto.${config.table};
-CREATE TRIGGER ${config.table}_trg_log_history
-  AFTER INSERT OR UPDATE OR DELETE ON postgresto.${config.table}
+DROP TRIGGER IF EXISTS config_trg_log_history ON postgresto.config;
+CREATE TRIGGER config_trg_log_history
+  AFTER INSERT OR UPDATE OR DELETE ON postgresto.config
   FOR EACH ROW
   EXECUTE FUNCTION postgresto.history_log_changes();
 
-DROP TRIGGER IF EXISTS ${menu.table}_trg_log_history ON postgresto.${menu.table};
-CREATE TRIGGER ${menu.table}_trg_log_history
-  AFTER INSERT OR UPDATE OR DELETE ON postgresto.${menu.table}
+DROP TRIGGER IF EXISTS menu_trg_log_history ON postgresto.menu;
+CREATE TRIGGER menu_trg_log_history
+  AFTER INSERT OR UPDATE OR DELETE ON postgresto.menu
   FOR EACH ROW
   EXECUTE FUNCTION postgresto.history_log_changes();
 
-DROP TRIGGER IF EXISTS ${view.table}_trg_log_history ON postgresto.${view.table};
-CREATE TRIGGER ${view.table}_trg_log_history
-  AFTER INSERT OR UPDATE OR DELETE ON postgresto.${view.table}
+DROP TRIGGER IF EXISTS view_trg_log_history ON postgresto.view;
+CREATE TRIGGER view_trg_log_history
+  AFTER INSERT OR UPDATE OR DELETE ON postgresto.view
   FOR EACH ROW
   EXECUTE FUNCTION postgresto.history_log_changes();

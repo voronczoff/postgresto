@@ -1,4 +1,4 @@
-# Full stack: Postgres + Liquibase migrate + PostgREST + nginx (UI + /api).
+# Full stack: Postgres + Liquibase migrate + PostgREST + Swagger UI + nginx.
 # Host ports: Postgres ${POSTGRES_PUBLIC_PORT:-54321}→5432, nginx 7777. Local Vite/PostgREST: ./launch.sh (uses .env PGPORT, usually 5432).
 # Build the UI first (`npm run build`) so ./dist is ready for the nginx volume.
 #
@@ -8,6 +8,7 @@
 name: ${AppName:-postgresto}
 
 services:
+
   dbms:
     image: postgres:${POSTGRES_VERSION:-18}
     container_name: ${AppName:-postgresto}-dbms
@@ -53,10 +54,6 @@ services:
       PGPASSWORD: ${PGPASSWORD:-postgres}
       PGDATABASE: ${PGDATABASE:-postgresto-local}
       PGSCHEMAS: ${PGSCHEMAS:-postgresto,docs,public}
-      VITE_CONFIG_TABLE: ${VITE_CONFIG_TABLE:-config}
-      VITE_MENU_TABLE: ${VITE_MENU_TABLE:-menu}
-      VITE_VIEW_TABLE: ${VITE_VIEW_TABLE:-view}
-      VITE_SEARCH_TABLE: ${VITE_SEARCH_TABLE:-search}
       CONTEXTS: ${CONTEXTS:-}
     volumes:
       - ./scripts:/liquibase/changelog
@@ -86,7 +83,7 @@ services:
       PGRST_JWT_ROLE_CLAIM_KEY: ${PGRST_JWT_ROLE_CLAIM_KEY:-$$.role}
       PGRST_DB_AGGREGATES_ENABLED: 'true'
       PGRST_SERVER_PORT: '3000'
-      PGRST_OPENAPI_SERVER_PROXY_URI: http://localhost:7777/postgresto/api
+      PGRST_OPENAPI_SERVER_PROXY_URI: ${PGRST_OPENAPI_SERVER_PROXY_URI:-http://localhost:7777${VITE_BASE_PATH:-/postgresto}/api}
     depends_on:
       migrate:
         condition: service_completed_successfully
@@ -94,9 +91,22 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-  nginx:
+  swagger:
+    image: swaggerapi/swagger-ui:${SWAGGER_UI_VERSION:-latest}
+    container_name: ${AppName:-postgresto}-swagger
+    environment:
+      BASE_URL: ${VITE_BASE_PATH:-/postgresto}/swagger
+      API_BASE_URL: ${VITE_BASE_PATH:-/postgresto}/api
+      PGSCHEMAS: postgresto,${PGSCHEMAS:-postgresto,docs,public}
+    volumes:
+      - ./docker/swagger-schemas.sh:/docker-entrypoint.d/45-swagger-schemas.sh:ro
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  proxy:
     image: nginx:${NGINX_VERSION:-latest}
-    container_name: ${AppName:-postgresto}-nginx
+    container_name: ${AppName:-postgresto}-proxy
     environment:
       VITE_BASE_PATH: ${VITE_BASE_PATH:-/postgresto}
       VITE_OIDC_AUTHORITY: ${VITE_OIDC_AUTHORITY:-}
@@ -110,7 +120,20 @@ services:
       - ./docker/nginx.conf.template:/etc/nginx/templates/default.conf.template:ro
     depends_on:
       - api
+      - swagger
     restart: unless-stopped
+
+  # Optional Keycloak auth service (local development).
+  # auth:
+  #   image: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION:-26.8.1}
+  #   container_name: ${AppName:-postgresto}-auth
+  #   command: ['start-dev']
+  #   environment:
+  #     KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USER:-admin}
+  #     KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+  #   ports:
+  #     - '127.0.0.1:${KEYCLOAK_PUBLIC_PORT:-8080}:8080'
+  #   restart: unless-stopped
 
 # volumes:
 # postgresto_pgdata:

@@ -10,7 +10,7 @@ LANGUAGE plpgsql
 AS $function$
 DECLARE
   v_full_name text := TG_TABLE_SCHEMA || '.' || TG_TABLE_NAME;
-  v_search_table text := 'postgresto.${search.table}';
+  v_search_table text := 'postgresto.search';
   v_row jsonb;
   v_id text;
   v_old_id text;
@@ -22,7 +22,7 @@ BEGIN
     jsonb_typeof(c.jsondata -> 'index') = 'object'
     AND (c.jsondata -> 'index' -> v_full_name) = 'true'::jsonb
   INTO v_indexed
-  FROM postgresto.${config.table} c
+  FROM postgresto.config c
   WHERE c.id = 'index';
 
   IF NOT COALESCE(v_indexed, false) THEN

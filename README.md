@@ -16,14 +16,19 @@ docker compose up
 
 The stack initializes Postgres, applies Liquibase migrations, starts PostgREST, and serves the UI through nginx. Default url: `http://localhost:7777/postgresto/`.
 
+Swagger UI is available at `http://localhost:7777/postgresto/swagger/` by default (`${VITE_BASE_PATH}/swagger` redirects to `${VITE_BASE_PATH}/swagger/`) and loads PostgREST's OpenAPI document from `${VITE_BASE_PATH:-/postgresto}/api`. For a remote deployment, set `PGRST_OPENAPI_SERVER_PROXY_URI` to the public API URL so Swagger's **Try it out** requests use the correct host and path.
+
+Use Swagger UI's schema dropdown to choose `postgresto` or any schema listed in `PGSCHEMAS`. Each selection loads that schema's OpenAPI document and sets the profile headers for **Try it out**, including writes and RPC calls. Restart the Swagger container after changing `PGSCHEMAS`.
+
 ## Features
 
 - **View configuration**
   - Discover database tables and its structure, dig beyond json fields
   - Create mapped table views and hierarchical trees
+  - JSON fields probing — discover nested fields in up to 1,000 rows, compare them with the current view, and add selected paths.
 
   ![View configurator for mapping fields and columns](docs/images/saved-views-columns.webp)
-  ![Field information and statistics](docs/images/field-info.webp)
+  ![JSONB field probing in the demo table](docs/images/json-fields-probing.webp)
   
 - **Table views**
   - Browse records with pagination and quick search
@@ -35,13 +40,14 @@ The stack initializes Postgres, applies Liquibase migrations, starts PostgREST, 
 
   ![Filter builder with boolean false and text contains Delta conditions](docs/images/filters.webp)
   ![Inline grid editing](docs/images/table-edit.webp)
+  ![Field Info popup for the demo table boolean field](docs/images/field-info.webp)
   ![Field statistics across the table](docs/images/field-stats-page.webp)
   ![Record details with a JSON field](docs/images/record-details.webp)
   ![Export options](docs/images/csv-export.webp)
   ![Import options](docs/images/csv-import.webp)
 
 - **Hierarchy views**
-  - Display recursive or fixed-level tree views.
+  - Display recursive or fixed-level tree views
   - search/filter/filter out control (click the icon to change mode)
   - Level selector and stats
 
@@ -52,10 +58,10 @@ The stack initializes Postgres, applies Liquibase migrations, starts PostgREST, 
   - Track inserts, updates, and deletes, with timestamps and user when available
   - Compare versions, with changed fields and their old/new values highlighted
   - Find past changes by table, record, date, or user
+  - History is currently implemented only for changes inside `jsondata` field
 
 - **Global search**
   - PostgreSQL full-text search (`tsvector` / `tsquery`) across selected tables and configured fields
-  - JSON search is currently implemented only for the `jsondata` field when its type is `jsonb`
   - Weighted fields, so matches in important fields rank higher
   - Language-aware stemming, phrase search, and boolean operators
   - Relevance ranking with highlighted snippets
@@ -73,9 +79,9 @@ The stack initializes Postgres, applies Liquibase migrations, starts PostgREST, 
 
 - **Additional tools**
   - **JSON Viewer** — inspect JSON in a readable, collapsible tree.
-  - **DB Info** — useful database queries in one place, including `pg_stat_statements`.
+  - **Server info** — General server and build details, DBMS reports including `pg_stat_statements`, and Auth diagnostics.
   
-  ![DB Info with pg_stat_statements query statistics](docs/images/db-info.webp)
+  ![Server info with pg_stat_statements query statistics](docs/images/db-info.webp)
 
   - **Decoder** — encode, decode, and convert URL, JSON, XML, YAML, Base64, hex, HTML entities, Unicode escapes, UTF-8/16/32, and binary. It can also decode JWTs and automatically detect input formats.
 

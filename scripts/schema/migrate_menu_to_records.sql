@@ -169,7 +169,7 @@ $$;
 
 DO $$
 DECLARE
-  menu_table text := '${menu.table}';
+  menu_table text := 'menu';
   legacy_items jsonb;
 BEGIN
   EXECUTE format(

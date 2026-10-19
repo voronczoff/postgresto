@@ -1,6 +1,6 @@
 --liquibase formatted sql
 --changeset framework:seed-config-cb08a120a0 runOnChange:true splitStatements:false
-INSERT INTO postgresto.${config.table}
+INSERT INTO postgresto.config
   (id, jsondata)
 VALUES (
   'env_switcher',
@@ -10,22 +10,26 @@ VALUES (
       {
         "url": "http://localhost:5173/postgresto/",
         "icon": "Home",
-        "label": "LH"
+        "label": "LocalHost",
+        "title": "LH"
       },
       {
         "url": "http://m5.local:5173/postgresto/",
         "icon": "Home",
-        "label": "M5"
+        "label": "M5",
+        "title": "M5"
       },
       {
         "url": "http://localhost:7777/postgresto/",
         "icon": "Home",
-        "label": "LH DOCKER"
+        "label": "LocalHost Docker",
+        "title": "LHD"
       },
       {
         "url": "http://m5.local:7777/postgresto/",
         "icon": "Home",
-        "label": "M5 DOCLER"
+        "label": "M5 Docker",
+        "title": "M5D"
       }
     ]
   }

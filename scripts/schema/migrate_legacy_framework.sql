@@ -23,14 +23,14 @@ BEGIN
           'tech_models_history'
         ],
         ARRAY[
-          '${config.table}',
-          '${menu.table}',
-          '${view.table}',
-          '${models.table}',
-          '${config.table}_history',
-          '${menu.table}_history',
-          '${view.table}_history',
-          '${models.table}_history'
+          'config',
+          'menu',
+          'view',
+          'model',
+          'config_history',
+          'menu_history',
+          'view_history',
+          'model_history'
         ]
       )
     LOOP

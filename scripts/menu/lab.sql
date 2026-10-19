@@ -1,6 +1,6 @@
 --liquibase formatted sql
 --changeset framework:seed-menu-3953f9ddf9 runOnChange:true splitStatements:false
-INSERT INTO postgresto.${menu.table}
+INSERT INTO postgresto.menu
   (id, jsondata)
 VALUES (
   'lab',

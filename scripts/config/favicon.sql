@@ -1,6 +1,6 @@
 --liquibase formatted sql
 --changeset framework:seed-config-053233181f runOnChange:true splitStatements:false
-INSERT INTO postgresto.${config.table}
+INSERT INTO postgresto.config
   (id, jsondata)
 VALUES (
   'favicon',

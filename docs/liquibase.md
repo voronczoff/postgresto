@@ -16,7 +16,7 @@ Product-specific settings and views can be managed in the app. Changes to instal
 
 ## Deployment settings
 
-Configure the deployment `.env` file with the database connection values (`PGHOST`, `PGPORT`, `PGUSER`, `PGPASSWORD`, and `PGDATABASE`) and `PGSCHEMAS`, a comma-separated list of application schemas. The framework schema `postgresto` is always included. The `VITE_*_TABLE` settings identify the framework tables used by the app.
+Configure the deployment `.env` file with the database connection values (`PGHOST`, `PGPORT`, `PGUSER`, `PGPASSWORD`, and `PGDATABASE`) and `PGSCHEMAS`, a comma-separated list of application schemas. The framework schema `postgresto` is always included. Framework tables have fixed names: `config`, `menu`, `view`, `model`, and `search`.
 
 ## Docker Compose
 

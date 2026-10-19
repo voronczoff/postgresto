@@ -1,6 +1,6 @@
 --liquibase formatted sql
 --changeset framework:seed-view-dd0dda4c4b runOnChange:true splitStatements:false
-INSERT INTO postgresto.${view.table}
+INSERT INTO postgresto.view
   (id, jsondata)
 VALUES (
   'postgresto.geo_regions|Default',

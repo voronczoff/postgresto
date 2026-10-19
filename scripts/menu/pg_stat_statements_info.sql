@@ -1,11 +1,12 @@
 --liquibase formatted sql
 --changeset framework:seed-menu-2aa45772c0 runOnChange:true splitStatements:false
-INSERT INTO postgresto.${menu.table}
+INSERT INTO postgresto.menu
   (id, jsondata)
 VALUES (
   'pg_stat_statements_info',
   $json$
   {
+    "icon": "ListAlt",
     "view": "public.pg_stat_statements_info|Default",
     "label": "Pg Stat Statements Info",
     "parent": "system_tables",
