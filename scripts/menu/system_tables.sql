@@ -6,10 +6,10 @@ VALUES (
   'system_tables',
   $json$
   {
-    "icon": "ListAlt",
+    "icon": "Construction",
     "label": "System Tables",
     "parent": "settings",
-    "priority": 3
+    "priority": 6
   }
   $json$::jsonb
 )

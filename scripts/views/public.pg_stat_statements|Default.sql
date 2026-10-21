@@ -318,7 +318,8 @@ VALUES (
     },
     "sorting": [],
     "rowcount": true,
-    "selector": true
+    "selector": true,
+    "pkOverride": "queryid"
   }
   $json$::jsonb
 )

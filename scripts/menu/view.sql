@@ -7,7 +7,7 @@ VALUES (
   $json$
   {
     "icon": "Layers",
-    "view": "postgresto.view|Default",
+    "view": "postgresto.view|plain",
     "label": "View",
     "parent": "system_tables",
     "priority": 2,

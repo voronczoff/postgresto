@@ -7,10 +7,11 @@ VALUES (
   $json$
   {
     "icon": "InfoOutlined",
-    "view": "/pages/dbinfo",
-    "label": "DB Info",
-    "parent": "tools",
-    "priority": 3
+    "view": "/pages/server_info",
+    "label": "Server Info",
+    "parent": "settings",
+    "priority": 5,
+    "description": "Inspect PostgreSQL storage, activity, indexes, and settings."
   }
   $json$::jsonb
 )

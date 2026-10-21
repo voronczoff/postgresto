@@ -18,7 +18,7 @@ VALUES (
       "Index": {
         "path": "index",
         "type": "text",
-        "visible": false,
+        "visible": true,
         "orderList": 6,
         "searchable": false
       },

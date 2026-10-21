@@ -62,8 +62,8 @@ Non-data screens (settings, tools, search, …):
 | `/pages/menu_manager` | Menu Manager |
 | `/pages/view_configurator` | View Configurator |
 | `/pages/postgrest_model_extractor` | Alias of View Configurator |
-| `/pages/server_info` | Server info (General, DBMS, Auth) |
-| `/pages/dbinfo` | Legacy alias for Server info |
+| `/pages/server_info` | Server info (General, DBMS, Auth, Client) |
+| `/pages/dbinfo` | Redirects to `/pages/server_info` |
 | `/pages/decoder` | Decoder |
 | `/pages/json-editor` | JSON Editor |
 | `/pages/json-viewer` | JSON Viewer (fullscreen) |
