@@ -79,10 +79,11 @@ Use Swagger UI's schema dropdown to choose `postgresto` or any schema listed in 
 
 - **Additional tools**
   - **JSON Viewer** — inspect JSON in a readable, collapsible tree.
-  - **Server info** — General server and build details, DBMS reports including `pg_stat_statements`, and Auth diagnostics.
+  - **Server info** — General server and build details, DBMS reports including `pg_stat_statements`, Auth diagnostics, and Client browser/device diagnostics.
   
   ![Server info with pg_stat_statements query statistics](docs/images/db-info.webp)
 
+  - **JSON Comparator** — compare two JSON documents with color-coded results for same, different, and missing values. Filter by status or search nested paths. Object key order is ignored; arrays are compared by index.
   - **Decoder** — encode, decode, and convert URL, JSON, XML, YAML, Base64, hex, HTML entities, Unicode escapes, UTF-8/16/32, and binary. It can also decode JWTs and automatically detect input formats.
 
   ![JSON editor with source and structured tree views](docs/images/json-editor.webp)

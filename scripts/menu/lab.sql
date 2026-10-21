@@ -8,7 +8,7 @@ VALUES (
   {
     "icon": "Science",
     "label": "LAB",
-    "priority": 2
+    "priority": 3
   }
   $json$::jsonb
 )
