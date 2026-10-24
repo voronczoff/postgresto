@@ -21,35 +21,43 @@ VALUES (
         "type": "text",
         "locked": false,
         "visible": true,
-        "orderList": 12
+        "orderList": 6
       },
       "date": {
         "path": "date",
         "type": "date",
         "locked": false,
         "visible": true,
-        "orderList": 20
+        "orderList": 14
+      },
+      "json": {
+        "path": "json",
+        "type": "text",
+        "locked": false,
+        "visible": true,
+        "orderList": 27
       },
       "real": {
         "path": "real",
         "type": "number",
         "locked": false,
         "visible": true,
-        "orderList": 17
+        "orderList": 11,
+        "searchable": false
       },
       "text": {
         "path": "text",
         "type": "text",
         "locked": false,
         "visible": true,
-        "orderList": 9
+        "orderList": 4
       },
       "time": {
         "path": "time",
         "type": "text",
         "locked": false,
         "visible": true,
-        "orderList": 21,
+        "orderList": 15,
         "searchable": false
       },
       "uuid": {
@@ -57,23 +65,30 @@ VALUES (
         "type": "text",
         "locked": false,
         "visible": true,
-        "orderList": 25,
+        "orderList": 19,
         "searchable": false
       },
       "bytea": {
         "path": "bytea",
         "type": "text",
         "locked": false,
-        "visible": false,
-        "orderList": 29,
+        "visible": true,
+        "orderList": 22,
         "searchable": false
       },
-      "money": {
-        "path": "money",
+      "jsonb": {
+        "path": "jsonb",
         "type": "text",
         "locked": false,
         "visible": true,
-        "orderList": 8,
+        "orderList": 28
+      },
+      "money": {
+        "path": "money",
+        "type": "number",
+        "locked": false,
+        "visible": true,
+        "orderList": 3,
         "searchable": false,
         "backgroundColor": "#a2ff80"
       },
@@ -82,7 +97,9 @@ VALUES (
         "type": "number",
         "locked": false,
         "visible": true,
-        "orderList": 15
+        "orderList": 9,
+        "textColor": "#ef0b0b",
+        "searchable": false
       },
       "parent": {
         "link": "demo/id",
@@ -97,35 +114,37 @@ VALUES (
         "type": "boolean",
         "locked": false,
         "visible": true,
-        "orderList": 19
+        "orderList": 13
       },
       "integer": {
         "path": "integer",
         "type": "number",
         "locked": false,
         "visible": true,
-        "orderList": 14
+        "orderList": 8,
+        "searchable": false
       },
       "numeric": {
         "path": "numeric",
         "type": "number",
         "locked": false,
         "visible": true,
-        "orderList": 16
+        "orderList": 10,
+        "searchable": false
       },
       "varchar": {
         "path": "varchar",
         "type": "text",
         "locked": false,
         "visible": true,
-        "orderList": 11
+        "orderList": 5
       },
       "interval": {
         "path": "interval",
         "type": "text",
         "locked": false,
         "visible": true,
-        "orderList": 24,
+        "orderList": 18,
         "searchable": false
       },
       "smallint": {
@@ -133,21 +152,22 @@ VALUES (
         "type": "number",
         "locked": false,
         "visible": true,
-        "orderList": 13
+        "orderList": 7,
+        "searchable": false
       },
       "timestamp": {
         "path": "timestamp",
         "type": "datetime",
         "locked": false,
         "visible": true,
-        "orderList": 22
+        "orderList": 16
       },
       "created at": {
         "path": "created_at",
         "type": "datetime",
         "locked": false,
         "visible": true,
-        "orderList": 28,
+        "orderList": 24,
         "backgroundColor": "#ebebeb"
       },
       "created by": {
@@ -155,7 +175,7 @@ VALUES (
         "type": "text",
         "locked": false,
         "visible": true,
-        "orderList": 30,
+        "orderList": 23,
         "backgroundColor": "#ebebeb"
       },
       "json label": {
@@ -163,14 +183,14 @@ VALUES (
         "type": "text",
         "locked": false,
         "visible": true,
-        "orderList": 26
+        "orderList": 20
       },
       "updated at": {
         "path": "updated_at",
         "type": "datetime",
         "locked": false,
         "visible": true,
-        "orderList": 31,
+        "orderList": 25,
         "backgroundColor": "#ebebeb"
       },
       "updated by": {
@@ -178,7 +198,7 @@ VALUES (
         "type": "text",
         "locked": false,
         "visible": true,
-        "orderList": 32,
+        "orderList": 26,
         "backgroundColor": "#ebebeb"
       },
       "jsonb flags": {
@@ -186,25 +206,28 @@ VALUES (
         "type": "text",
         "locked": false,
         "visible": true,
-        "orderList": 27
+        "orderList": 21
       },
       "timestamptz": {
         "path": "timestamptz",
         "type": "datetime",
         "locked": false,
         "visible": true,
-        "orderList": 23
+        "orderList": 17
       },
       "double precision": {
         "path": "double_precision",
         "type": "number",
         "locked": false,
         "visible": true,
-        "orderList": 18
+        "orderList": 12,
+        "searchable": false
       }
     },
     "filters": {
-      "quickSearch": ""
+      "filterPane": null,
+      "quickSearch": "",
+      "preliminaryFilter": []
     },
     "sorting": [
       {

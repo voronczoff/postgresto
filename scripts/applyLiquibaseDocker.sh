@@ -5,8 +5,8 @@
 # Env (from repo-root .env or shell):
 #   PGHOST / PGPORT / PGUSER / PGPASSWORD / PGDATABASE
 #   CONTEXTS (optional Liquibase context filter)
-#   LIQUIBASE_IMAGE (default: built from docker/liquibase with postgresql driver)
-#   LIQUIBASE_VERSION (default: 5.0) — base liquibase/liquibase tag when building
+#   LIQUIBASE_IMAGE (default: liquibase/liquibase:$LIQUIBASE_VERSION)
+#   LIQUIBASE_VERSION (default: 4.33)
 #   DOCKER_DB_HOST (default: host.docker.internal) — replaces localhost in JDBC URL
 set -euo pipefail
 
@@ -27,9 +27,8 @@ PGUSER=${PGUSER:-postgres}
 PGPASSWORD=${PGPASSWORD:-postgres}
 PGDATABASE=${PGDATABASE:-postgresto-local}
 JDBC_URL="jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}"
-LIQUIBASE_VERSION="${LIQUIBASE_VERSION:-5.0}"
-AppName="${AppName:-postgresto}"
-LIQUIBASE_IMAGE="${LIQUIBASE_IMAGE:-${AppName}-liquibase:${LIQUIBASE_VERSION}}"
+LIQUIBASE_VERSION="${LIQUIBASE_VERSION:-4.33}"
+LIQUIBASE_IMAGE="${LIQUIBASE_IMAGE:-liquibase/liquibase:${LIQUIBASE_VERSION}}"
 DOCKER_DB_HOST="${DOCKER_DB_HOST:-host.docker.internal}"
 
 if ! command -v docker >/dev/null 2>&1; then
@@ -37,13 +36,6 @@ if ! command -v docker >/dev/null 2>&1; then
   exit 1
 fi
 
-# Liquibase 5+ needs an explicit PostgreSQL JDBC driver (baked into our image).
-if ! docker image inspect "$LIQUIBASE_IMAGE" >/dev/null 2>&1; then
-  docker build \
-    --build-arg "LIQUIBASE_VERSION=${LIQUIBASE_VERSION}" \
-    -t "$LIQUIBASE_IMAGE" \
-    "$REPO_ROOT/docker/liquibase"
-fi
 
 # From inside the container, localhost is the container — rewrite to the host.
 DOCKER_DB_URL="$JDBC_URL"

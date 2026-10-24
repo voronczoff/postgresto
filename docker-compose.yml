@@ -45,7 +45,7 @@ services:
           - postgres
 
   migrate:
-    image: liquibase/liquibase:${LIQUIBASE_VERSION:-5.0}
+    image: liquibase/liquibase:${LIQUIBASE_VERSION:-4.33}
     container_name: ${AppName:-postgresto}-migrate
     environment:
       PGHOST: ${PGHOST:-dbms}
@@ -57,12 +57,7 @@ services:
       CONTEXTS: ${CONTEXTS:-}
     volumes:
       - ./scripts:/liquibase/changelog
-    entrypoint: ['/bin/bash', '-c']
-    command:
-      - |
-        set -e
-        lpm add postgresql --global
-        /liquibase/changelog/applyLiquibase.sh
+    entrypoint: [/liquibase/changelog/applyLiquibase.sh]
     depends_on:
       dbms:
         condition: service_healthy
